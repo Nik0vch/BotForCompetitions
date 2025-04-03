@@ -1,11 +1,12 @@
 import os, logging
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, Router
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
-from .handlers import router
 
 bot = Bot(token=os.getenv("BOT_TOKEN"), parse_mode=ParseMode.HTML)
 dp = Dispatcher(storage=MemoryStorage())
+
+from .handlers import router #импорт после инициализации бота во избежании ошибки зацикливония
 dp.include_router(router)
 
 async def bot_run():
@@ -15,4 +16,5 @@ async def bot_run():
 
 async def bot_stop():
     await dp.stop_polling()
+
 

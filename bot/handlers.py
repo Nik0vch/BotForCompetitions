@@ -1,8 +1,14 @@
 from .keyboard import *
-from aiogram import types, F, Router
+from sqlalchemy.exc import IntegrityError
+from aiogram import F
 from aiogram.types import Message
 from aiogram.filters import Command
 from aiogram.types import Message
+from services import participantService
+from aiogram import Router
+from depend import *
+from .bot import bot
+from services import *
 
 router = Router()
 
@@ -15,5 +21,10 @@ async def info(msg: Message):
     await msg.answer("Ну, это олимпиада, чё еще сказать.",)
 
 @router.message(F.text == "Зарегестрироваться")
-async def info(msg: Message):
-    await msg.answer("Я ещё не привязал бд, жди обновлений.",)
+async def regist(msg: Message):
+    try:
+        async for db in GetDbSession():
+            await participantService.CreateUser(db, msg.from_user.full_name, msg.from_user.id)
+            await msg.answer("Вы успешно зарегестрированы.",)
+    except IntegrityError as e:
+        await msg.answer("Вы уже зарегестрированы.",)

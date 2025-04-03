@@ -1,18 +1,22 @@
-import os, logging, uvicorn, asyncio
+import logging, uvicorn, asyncio
+from os import getenv
+from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-from dotenv import load_dotenv
-from bot.bot import bot_run, bot_stop
+from bot import *
+from database import *
 
 load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')    
+    await Db_Connect()
     asyncio.create_task(bot_run())
     yield
+    await Db_Disconnect()
     await bot_stop()
 
 
@@ -27,4 +31,4 @@ async def index(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, port=int(os.getenv("PORT")))
+    uvicorn.run(app, port=int(getenv("PORT")))
