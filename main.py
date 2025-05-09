@@ -1,12 +1,10 @@
-import logging, uvicorn, asyncio
-from os import getenv
+import logging, uvicorn, asyncio, os
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI
 from bot import *
 from database import *
+from controllers import router
 
 load_dotenv()
 
@@ -19,16 +17,9 @@ async def lifespan(app: FastAPI):
     await Db_Disconnect()
     await bot_stop()
 
-
-app = FastAPI(lifespan=lifespan)
-templates = Jinja2Templates(directory="templates")
-
-
-@app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
-
+app = FastAPI(lifespan=lifespan, swagger_ui_parameters={"syntaxHighlight": False})
+app.include_router(router)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, port=int(getenv("PORT")))
+    uvicorn.run(app, port=int(os.environ['PORT']))

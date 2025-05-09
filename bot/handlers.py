@@ -4,10 +4,9 @@ from aiogram import F
 from aiogram.types import Message
 from aiogram.filters import Command
 from aiogram.types import Message
-from services import participantService
+from services import *
 from aiogram import Router
 from depend import *
-from .bot import bot
 from services import *
 
 router = Router()
@@ -28,3 +27,14 @@ async def regist(msg: Message):
             await msg.answer("Вы успешно зарегестрированы.",)
     except IntegrityError as e:
         await msg.answer("Вы уже зарегестрированы.",)
+
+@router.message()
+async def any(msg: Message): 
+    # spacyService.train_ner_model()
+    # spacyService.train_city()
+    attributes = spacyService.GetAttributes(msg.text)
+    # print(attributes)
+    text = ""
+    for key, value in attributes.items():
+        text += key + ": " + value + "\n"
+    await msg.answer(text)
