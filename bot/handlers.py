@@ -29,12 +29,9 @@ async def regist(msg: Message):
         await msg.answer("Вы уже зарегестрированы.",)
 
 @router.message()
-async def any(msg: Message): 
-    # spacyService.train_ner_model()
-    # spacyService.train_city()
+async def any(msg: Message):
     attributes = spacyService.GetAttributes(msg.text)
-    # print(attributes)
     text = ""
     for key, value in attributes.items():
         text += key + ": " + value + "\n"
-    await msg.answer(text)
+    await msg.answer(text if text != "" else "-")

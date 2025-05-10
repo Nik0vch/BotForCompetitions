@@ -21,3 +21,8 @@ async def TrainByUniversity(request: ModelTrainingCityRequest):
 async def TrainByNomination(request: ModelTrainingCityRequest):
     spacyService.TrainingByNominations(request.data)
     return
+
+@router.post("/training", tags=["Training"])
+async def Train():
+    spacyService.LoadTrainData()
+    return
