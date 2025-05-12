@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from bot import *
 from database import *
 from controllers import router
+from neural import spacyModel, whisperModel
 
 load_dotenv()
 
@@ -12,6 +13,8 @@ load_dotenv()
 async def lifespan(app: FastAPI):
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')    
     await Db_Connect()
+    spacyModel.Init()
+    whisperModel.Init()
     asyncio.create_task(bot_run())
     yield
     await Db_Disconnect()

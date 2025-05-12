@@ -3,11 +3,11 @@ from sqlalchemy.exc import IntegrityError
 from aiogram import F
 from aiogram.types import Message
 from aiogram.filters import Command
-from aiogram.types import Message
 from services import *
 from aiogram import Router
 from depend import *
 from services import *
+import logging
 
 router = Router()
 
@@ -28,10 +28,14 @@ async def regist(msg: Message):
     except IntegrityError as e:
         await msg.answer("Вы уже зарегестрированы.",)
 
-@router.message()
-async def any(msg: Message):
-    attributes = spacyService.GetAttributes(msg.text)
-    text = ""
-    for key, value in attributes.items():
-        text += key + ": " + value + "\n"
-    await msg.answer(text if text != "" else "-")
+@router.message(F.voice)
+async def handle_voice(msg: Message):
+    try:
+        text = ""
+        attributes = await spacyService.GetAttributesWithVoice(msg)
+        for key, value in attributes.items():
+            text += key + ": " + value + "\n"
+        await msg.answer(f"{text}"  if text != "" else "-")
+    except Exception as e:
+        await msg.answer("⚠️ Произошла ошибка при обработке голосового сообщения.")
+        logging.error(e)
