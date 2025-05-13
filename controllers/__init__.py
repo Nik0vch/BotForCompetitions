@@ -1,2 +1,3 @@
 from .index import router
-from .modelTraining import *
+from .modelTrainingController import *
+from .nominationController import *

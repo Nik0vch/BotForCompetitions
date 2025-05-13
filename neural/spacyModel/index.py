@@ -13,7 +13,7 @@ def Init():
     global nlp
     logging.info("Идёт подключение модели spacy...")
     try:
-        nlp = spacy.load(modelName)
+        nlp = spacy.load(f"NeuralModels/{modelName}")
     except:
         nlp = spacy.blank("ru")
 
